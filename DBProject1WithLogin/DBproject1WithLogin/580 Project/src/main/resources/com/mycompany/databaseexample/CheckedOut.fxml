@@ -66,14 +66,14 @@
                             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                 <children>
                     <TextField fx:id="memberNumber" prefWidth="175.0" promptText="Library Number" stylesheets="@styles.css" />
-                  <TextField fx:id="memberNumber1" prefWidth="175.0" promptText="Book ID" stylesheets="@styles.css" />
-                  <TextField fx:id="memberNumber11" prefWidth="175.0" promptText="Book Name" stylesheets="@styles.css" />
+                  <TextField fx:id="bookIDTextField" prefWidth="175.0" promptText="Book ID" stylesheets="@styles.css" />
+                  <TextField fx:id="nameTextField" prefWidth="175.0" promptText="Book Name" stylesheets="@styles.css" />
                 </children>
             </HBox>
             <HBox prefHeight="168.0" prefWidth="741.0" spacing="10.0">
                 <children>
                   <Button mnemonicParsing="false" onAction="#handleCheckInAction" prefHeight="34.0" prefWidth="110.0" styleClass="btn-primary" stylesheets="@styles.css" text="Check In" />
-                  <Button mnemonicParsing="false" onAction="#handleSearchAction" prefHeight="34.0" prefWidth="99.0" styleClass="btn-warning" stylesheets="@styles.css" text="Search" />
+                  <Button mnemonicParsing="false" onAction="#handleCheckOutSearchAction" prefHeight="34.0" prefWidth="99.0" styleClass="btn-warning" stylesheets="@styles.css" text="Search" />
                   <Button mnemonicParsing="false" onAction="#handleShowAllRecords" prefHeight="34.0" prefWidth="136.0" styleClass="btn-success" stylesheets="@styles.css" text="Show All Records" />
                   <Button mnemonicParsing="false" onAction="#handleUpdateRecord" prefHeight="34.0" prefWidth="136.0" styleClass="btn-info" stylesheets="@styles.css" text="Update" />
                     

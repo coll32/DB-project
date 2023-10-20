@@ -83,7 +83,7 @@ public class MainController {
     private void members() throws IOException {
 
         try {
-            Pane newLoadedPane = FXMLLoader.load(getClass().getResource("Members.fxml"));
+            Pane newLoadedPane = FXMLLoader.load(getClass().getResource("Members_1.fxml"));
             contentPane.getChildren().clear();
             contentPane.getChildren().add(newLoadedPane);
 

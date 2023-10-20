@@ -90,9 +90,9 @@
             </HBox>
             <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                 <children>
-                    <Button mnemonicParsing="false" onAction="#handleAddMovie" prefHeight="34.0" prefWidth="136.0" styleClass="btn-primary" stylesheets="@styles.css" text="Add Member" />
+                    <Button mnemonicParsing="false" onAction="#handleAddMember" prefHeight="34.0" prefWidth="136.0" styleClass="btn-primary" stylesheets="@styles.css" text="Add Member" />
                     <Button mnemonicParsing="false" onAction="#handleDeleteAction" prefHeight="34.0" prefWidth="116.0" styleClass="btn-danger" stylesheets="@styles.css" text="Delete Member" />
-                  <Button mnemonicParsing="false" onAction="#handleSearchAction" prefHeight="34.0" prefWidth="99.0" styleClass="btn-warning" stylesheets="@styles.css" text="Search" />
+                  <Button mnemonicParsing="false" onAction="#handleMemSearchAction" prefHeight="34.0" prefWidth="99.0" styleClass="btn-warning" stylesheets="@styles.css" text="Search" />
                   <Button mnemonicParsing="false" onAction="#handleShowAllRecords" prefHeight="34.0" prefWidth="136.0" styleClass="btn-success" stylesheets="@styles.css" text="Show All Records" />
                   <Button mnemonicParsing="false" onAction="#handleUpdateRecord" prefHeight="34.0" prefWidth="136.0" styleClass="btn-info" stylesheets="@styles.css" text="Update" />
                     
