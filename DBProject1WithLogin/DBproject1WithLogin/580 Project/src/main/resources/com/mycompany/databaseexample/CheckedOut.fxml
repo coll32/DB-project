@@ -42,43 +42,32 @@
             <children>
             <Button mnemonicParsing="false" onAction="#handleCheckInAction" prefHeight="34.0" prefWidth="222.0" styleClass="btn-primary" stylesheets="@styles.css" text="Check In" />
             <Button mnemonicParsing="false" onAction="#handleDeleteAction" prefHeight="34.0" prefWidth="202.0" styleClass="btn-danger" stylesheets="@styles.css" text="Delete" />
-            <Button mnemonicParsing="false" onAction="#handleUpdateRecord" prefHeight="34.0" prefWidth="208.0" styleClass="btn-info" stylesheets="@styles.css" text="Update" />
-            <Button mnemonicParsing="false" onAction="#handleShowAllRecords" prefHeight="34.0" prefWidth="213.0" styleClass="btn-success" stylesheets="@styles.css" text="Show All Records" />
             <Button mnemonicParsing="false" onAction="#handleSearchAction" prefHeight="34.0" prefWidth="207.0" styleClass="btn-warning" stylesheets="@styles.css" text="Search" />
-            <TextField fx:id="memberNumber2" prefWidth="175.0" promptText="Library Number" stylesheets="@styles.css" />
-            <TextField fx:id="memberNumber12" prefWidth="175.0" promptText="Book ID" stylesheets="@styles.css" />
-            <TextField fx:id="memberNumber111" prefWidth="175.0" promptText="Book Name" stylesheets="@styles.css" />
+            <Button mnemonicParsing="false" onAction="#handleShowAllRecords" prefHeight="34.0" prefWidth="213.0" styleClass="btn-success" stylesheets="@styles.css" text="Show All Records" />
+            <TextField fx:id="memberNumber" prefWidth="175.0" promptText="Library Number" stylesheets="@styles.css" />
+            <TextField fx:id="bookIDTextField" prefWidth="175.0" promptText="Book ID" stylesheets="@styles.css" />
+            <TextField fx:id="nameTextField" prefWidth="175.0" promptText="Book Name" stylesheets="@styles.css" />
             </children>
         </VBox>
     </left>
     <center>
         <VBox fx:id="vBox" minHeight="600.0" prefHeight="500.0" styleClass="content-section">
             <children>
-                <Label id="content-header" stylesheets="@demo.css" text="Library Database Application Test" textFill="#11c3c6" />
+                <Label id="content-header" stylesheets="@demo.css" text="Checked Out Books" textFill="#11c3c6" />
             
                 <!-- container using pref size as max size to not grow larger than the image -->
                 <VBox maxHeight="-Infinity" maxWidth="-Infinity" styleClass="my-rect" stylesheets="@demo.css" />  
             
             
-                <Label id="content" styleClass="content-section" stylesheets="@demo.css" text="This application uses SQLite and allows adding records, deleting records, searching records, and updating records" />
+                <Label id="content" styleClass="content-section" stylesheets="@demo.css" />
                 <TableView fx:id="checkedOutView" onMouseClicked="#showRowData" prefHeight="340.0" prefWidth="741.0" />
                 
                             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
-                <children>
-                    <TextField fx:id="memberNumber" prefWidth="175.0" promptText="Library Number" stylesheets="@styles.css" />
-                  <TextField fx:id="bookIDTextField" prefWidth="175.0" promptText="Book ID" stylesheets="@styles.css" />
-                  <TextField fx:id="nameTextField" prefWidth="175.0" promptText="Book Name" stylesheets="@styles.css" />
-                </children>
-            </HBox>
-            <HBox prefHeight="168.0" prefWidth="741.0" spacing="10.0">
-                <children>
+               <children>
                   <Button mnemonicParsing="false" onAction="#handleCheckInAction" prefHeight="34.0" prefWidth="110.0" styleClass="btn-primary" stylesheets="@styles.css" text="Check In" />
-                  <Button mnemonicParsing="false" onAction="#handleCheckOutSearchAction" prefHeight="34.0" prefWidth="99.0" styleClass="btn-warning" stylesheets="@styles.css" text="Search" />
-                  <Button mnemonicParsing="false" onAction="#handleShowAllRecords" prefHeight="34.0" prefWidth="136.0" styleClass="btn-success" stylesheets="@styles.css" text="Show All Records" />
-                  <Button mnemonicParsing="false" onAction="#handleUpdateRecord" prefHeight="34.0" prefWidth="136.0" styleClass="btn-info" stylesheets="@styles.css" text="Update" />
-                    
-                      </children>
+               </children>
             </HBox>
+            <HBox prefHeight="168.0" prefWidth="741.0" spacing="10.0" />
                 
             </children>
             </VBox>
@@ -90,7 +79,7 @@
     <bottom>
         <HBox id="footer-section" alignment="CENTER" minHeight="100.0" prefHeight="100.0" prefWidth="853.0" BorderPane.alignment="CENTER">
             <children>
-                <Label fx:id="footerLabel" alignment="CENTER" prefHeight="31.0" prefWidth="313.0" styleClass="footer" stylesheets="@demo.css" text="Copyright 2023 Dr. Samir Hamada">
+                <Label fx:id="footerLabel" alignment="CENTER" prefHeight="31.0" prefWidth="313.0" styleClass="footer" stylesheets="@demo.css">
                     <font>
                         <Font name="Arial" size="12.0" />
                     </font>

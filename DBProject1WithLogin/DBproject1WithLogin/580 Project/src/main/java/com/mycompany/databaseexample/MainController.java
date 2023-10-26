@@ -66,7 +66,7 @@ public class MainController {
     public void books() throws IOException {
 
         try {
-            Pane newLoadedPane = FXMLLoader.load(getClass().getResource("BooksTable.fxml"));
+            Pane newLoadedPane = FXMLLoader.load(getClass().getResource("BooksTable_1.fxml"));
             contentPane.getChildren().clear();
             contentPane.getChildren().add(newLoadedPane);
 

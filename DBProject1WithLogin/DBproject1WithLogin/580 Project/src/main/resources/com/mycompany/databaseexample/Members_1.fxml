@@ -43,7 +43,6 @@
             <Button mnemonicParsing="false" onAction="#handleAddMember" prefHeight="34.0" prefWidth="198.0" styleClass="btn-primary" stylesheets="@styles.css" text="Add Member" />
             <Button mnemonicParsing="false" onAction="#handleDeleteAction" prefHeight="34.0" prefWidth="201.0" styleClass="btn-danger" stylesheets="@styles.css" text="Delete Member" />
             <Button mnemonicParsing="false" onAction="#handleMemSearchAction" prefHeight="34.0" prefWidth="209.0" styleClass="btn-warning" stylesheets="@styles.css" text="Search" />
-            <Button mnemonicParsing="false" onAction="#handleUpdateRecord" prefHeight="34.0" prefWidth="226.0" styleClass="btn-info" stylesheets="@styles.css" text="Update" />
             <Button mnemonicParsing="false" onAction="#handleShowAllRecords" prefHeight="34.0" prefWidth="219.0" styleClass="btn-success" stylesheets="@styles.css" text="Show All Records" />
             </children>
         </VBox>
@@ -57,7 +56,7 @@
                 <VBox maxHeight="-Infinity" maxWidth="-Infinity" styleClass="my-rect" stylesheets="@demo.css" />  
             
             
-                <Label id="content" styleClass="content-section" stylesheets="@demo.css" text="This application uses SQLite and allows adding records, deleting records, searching records, and updating records" />
+                <Label id="content" styleClass="content-section" stylesheets="@demo.css" />
                 <TableView fx:id="memberView" onMouseClicked="#showRowData" prefHeight="279.0" prefWidth="741.0" />
                 
                             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
@@ -72,7 +71,6 @@
                     <Button mnemonicParsing="false" onAction="#handleDeleteAction" prefHeight="34.0" prefWidth="116.0" styleClass="btn-danger" stylesheets="@styles.css" text="Delete Member" />
                   <Button mnemonicParsing="false" onAction="#handleMemSearchAction" prefHeight="34.0" prefWidth="99.0" styleClass="btn-warning" stylesheets="@styles.css" text="Search" />
                   <Button mnemonicParsing="false" onAction="#handleShowAllRecords" prefHeight="34.0" prefWidth="136.0" styleClass="btn-success" stylesheets="@styles.css" text="Show All Records" />
-                  <Button mnemonicParsing="false" onAction="#handleUpdateRecord" prefHeight="34.0" prefWidth="136.0" styleClass="btn-info" stylesheets="@styles.css" text="Update" />
                     
                 </children>
             </HBox>
@@ -87,7 +85,7 @@
     <bottom>
         <HBox id="footer-section" alignment="CENTER" minHeight="100.0" prefHeight="100.0" prefWidth="853.0" BorderPane.alignment="CENTER">
             <children>
-                <Label fx:id="footerLabel" alignment="CENTER" prefHeight="31.0" prefWidth="313.0" styleClass="footer" stylesheets="@demo.css" text="Copyright 2023 Dr. Samir Hamada">
+                <Label fx:id="footerLabel" alignment="CENTER" prefHeight="31.0" prefWidth="313.0" styleClass="footer" stylesheets="@demo.css">
                     <font>
                         <Font name="Arial" size="12.0" />
                     </font>

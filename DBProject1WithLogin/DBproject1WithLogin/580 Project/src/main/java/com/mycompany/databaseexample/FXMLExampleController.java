@@ -81,7 +81,7 @@ public class FXMLExampleController {
 
                     root = FXMLLoader.load(getClass().getResource("main.fxml"));
                     Stage stage = new Stage();
-                    stage.setTitle("My New Stage Title");
+                    stage.setTitle("Library Database");
                     stage.setScene(new Scene(root, 450, 450));
                    stage.show();
 

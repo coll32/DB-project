@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
@@ -29,21 +30,15 @@
                   <MenuItem mnemonicParsing="false" onAction="#checkedOut" text="Checked Out" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem mnemonicParsing="false" onAction="#about" text="About" />
-            </items>
-          </Menu>
         </menus>
       </MenuBar>
-      <VBox fx:id="contentPane" prefHeight="776.0" prefWidth="1280.0">
+      <VBox fx:id="contentPane" alignment="TOP_CENTER" prefHeight="776.0" prefWidth="1280.0">
          <children>
-            <ImageView fitHeight="717.0" fitWidth="1279.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@Overpass.png" />
-               </image>
-            </ImageView>
-            <TextField prefHeight="142.0" prefWidth="1280.0" text="Main" />
+            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="282.0" prefWidth="459.0" stylesheets="@demo.css" text="Welcome!" textAlignment="CENTER" textFill="#11c3c6">
+               <font>
+                  <Font name="Book Antiqua" size="96.0" />
+               </font>
+            </Label>
          </children>
       </VBox>
    </children>
