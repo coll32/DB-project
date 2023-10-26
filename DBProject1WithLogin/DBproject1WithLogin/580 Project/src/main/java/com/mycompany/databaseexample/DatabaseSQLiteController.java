@@ -782,7 +782,7 @@ public class DatabaseSQLiteController implements Initializable {
         String sql = "Select * from CheckOut where true"; //querey
 
         if (!_name.isEmpty()) {
-            sql += " and name like '%" + _name + "%'";
+            sql += " and Name like '%" + _name + "%'";
         }
         if (!_libraryNumber.isEmpty()) {
             sql += " and LibraryNumber ='" + _libraryNumber + "'";
