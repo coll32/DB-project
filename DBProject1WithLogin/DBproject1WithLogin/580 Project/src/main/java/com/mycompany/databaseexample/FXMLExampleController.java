@@ -67,7 +67,8 @@ public class FXMLExampleController {
         DatabaseConnection connectNow = new DatabaseConnection();
         Connection connectDB = connectNow.getConnection();
 
-        String verifyLogin = "SELECT count(1) FROM Members WHERE Name = '" + username.getText() + "' AND LibraryNumber = '" + password.getText() + "'";
+        String verifyLogin = "SELECT count(1) FROM Librarians WHERE UserName = '" + username.getText() + "' AND Password = '" + password.getText() + "'";
+        //String verifyLogin = "SELECT count(1) FROM Members WHERE Name = '" + username.getText() + "' AND LibraryNumber = '" + password.getText() + "'";
         try {
             Statement statement = connectDB.createStatement();
             ResultSet queryResult;
