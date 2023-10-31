@@ -323,7 +323,7 @@ public class DatabaseSQLiteController implements Initializable {
         footerLabel.setText("Record inserted into table successfully!");
     }
     
-    public void insertMember(String name, int libraryNumber) throws SQLException {
+    public void insertMember(String name) throws SQLException {
         int last_inserted_id = 0;
         Connection conn = null;
         try {
@@ -339,7 +339,7 @@ public class DatabaseSQLiteController implements Initializable {
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, name);
-            pstmt.setInt(2, libraryNumber);
+            //pstmt.setInt(2, libraryNumber);
             pstmt.executeUpdate();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
@@ -360,7 +360,7 @@ public class DatabaseSQLiteController implements Initializable {
         System.out.println("last_inserted_id " + last_inserted_id);
   
         //data.add(new Movie(last_inserted_id, title, year, rating));
-        memData.add(new Member(libraryNumber, name));
+        memData.add(new Member(last_inserted_id, name));
     }
 
     @FXML
@@ -370,7 +370,8 @@ public class DatabaseSQLiteController implements Initializable {
 
         try {
             // insert a new rows
-            insertMember( memNameText.getText(),Integer.parseInt(libNumText.getText()));
+            //insertMember( memNameText.getText(),Integer.parseInt(libNumText.getText()));
+            insertMember( memNameText.getText());
 
             System.out.println("Data was inserted Successfully");
         } catch (SQLException ex) {
