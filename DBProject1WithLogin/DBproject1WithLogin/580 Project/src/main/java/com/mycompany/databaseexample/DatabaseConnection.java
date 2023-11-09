@@ -14,18 +14,21 @@ public class DatabaseConnection {
     public Connection databaseLink;
     
     public Connection getConnection(){
-        String databaseName = "BooksDB";
+        String databaseName = "Library";
  //       String databaseUser = "Jose Mccoy";
 //        String databasePassword = "202";
-        String url = "jdbc:sqlite:src/main/resources/com/mycompany/databaseexample/BooksDB.db";
+        String username = "jessie"; // Replace with your SQL Server username
+        String password = "2311";
+        String databaseURL = "jdbc:sqlserver://localhost:1433;databaseName=Library;encrypt=true;trustServerCertificate=true; ";
         
        try{
-           databaseLink = DriverManager.getConnection(url);
+           databaseLink = DriverManager.getConnection(databaseURL, username, password);
        } catch(Exception e){
            e.printStackTrace();
+           System.out.println("Didnt get DB");
        }
        
-           return databaseLink;
+        return databaseLink;
     }
     
 

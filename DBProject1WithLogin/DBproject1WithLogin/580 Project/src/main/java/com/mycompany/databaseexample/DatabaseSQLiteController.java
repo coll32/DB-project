@@ -72,7 +72,8 @@ public class DatabaseSQLiteController implements Initializable {
         CreateSQLiteTable();
     }
 
-    String databaseURL = "jdbc:sqlite:src/main/resources/com/mycompany/databaseexample/BooksDB.db";
+    //String databaseURL = "jdbc:sqlite:src/main/resources/com/mycompany/databaseexample/BooksDB.db";
+            String databaseURL = "jdbc:sqlserver://localhost:1433;databaseName=Library;encrypt=true;trustServerCertificate=true; ";
    
     /* Connect to a sample database
      */

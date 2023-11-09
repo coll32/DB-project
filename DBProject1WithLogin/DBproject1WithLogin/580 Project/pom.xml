@@ -9,6 +9,13 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
+    <dependencies>
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>12.4.2.jre11</version>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
 
@@ -81,12 +88,13 @@
             </dependencies>
         </profile>
     </profiles>
-    <dependencies>
+    <!--dependencies>
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.43.0.0</version>
         </dependency>
-    </dependencies>
+        
+    </dependencies-->
     <name>580 Project</name>
 </project>
