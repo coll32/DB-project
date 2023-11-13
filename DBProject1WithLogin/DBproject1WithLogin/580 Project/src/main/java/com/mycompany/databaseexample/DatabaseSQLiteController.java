@@ -73,8 +73,9 @@ public class DatabaseSQLiteController implements Initializable {
     }
 
     //String databaseURL = "jdbc:sqlite:src/main/resources/com/mycompany/databaseexample/BooksDB.db";
-            String databaseURL = "jdbc:sqlserver://localhost:1433;databaseName=Library;encrypt=true;trustServerCertificate=true; ";
-   
+    String databaseURL = "jdbc:sqlserver://localhost:1433;databaseName=Library;encrypt=true;trustServerCertificate=true;";
+    String username = "jessie"; // Replace with your SQL Server username
+    String password = "2311";
     /* Connect to a sample database
      */
     private ObservableList<Book> data; //object that holds data
@@ -140,7 +141,7 @@ public class DatabaseSQLiteController implements Initializable {
         
       
         
-        TableColumn checkedLibNum = new TableColumn("Library Number");
+        TableColumn checkedLibNum = new TableColumn("LibraryNumber");
         checkedLibNum.setMinWidth(100);
         checkedLibNum.setCellValueFactory(new PropertyValueFactory<CheckOut, Integer>("LibraryNumber"));
         
@@ -168,7 +169,7 @@ public class DatabaseSQLiteController implements Initializable {
         try {
 
             // create a connection to the database
-            conn = DriverManager.getConnection(databaseURL);
+            conn = DriverManager.getConnection(databaseURL, username, password);
 
             System.out.println("Connection to SQLite has been established.");
             System.out.println(databaseURL);
@@ -178,15 +179,12 @@ public class DatabaseSQLiteController implements Initializable {
             // Ensure we can query the actors table
             stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
-            System.out.println(rs.getInt("id") + rs.getString("name"));
+            //System.out.println(rs.getInt("ID") + rs.getString("Name"));
 
             while (rs.next()) {
-                //Movie movie;
-                //movie = new Movie(rs.getInt("id"), rs.getString("title"), rs.getInt("year"), rs.getString("rating"));
-                //System.out.println(movie.getId() + " - " + movie.getTitle() + " - " + movie.getRating() + " - " + movie.getYear());
-                //data.add(movie);
+                
                 Book book;
-                book = new Book(rs.getInt("id"), rs.getString("name"), rs.getString("author"), rs.getInt("year"));
+                book = new Book(rs.getInt("ID"), rs.getString("Name"), rs.getString("Author"), rs.getInt("Year"));
                 System.out.println( book.getId() + book.getName() + book.getAuthor() + book.getYear());
                 data.add(book);
             }
@@ -268,7 +266,7 @@ public class DatabaseSQLiteController implements Initializable {
         try {
             // create a connection to the database
 
-            conn = DriverManager.getConnection(databaseURL);
+            conn = DriverManager.getConnection(databaseURL, username, password);
 
             System.out.println("Connection to SQLite has been established.");
 
@@ -330,7 +328,7 @@ public class DatabaseSQLiteController implements Initializable {
         try {
             // create a connection to the database
 
-            conn = DriverManager.getConnection(databaseURL);
+            conn = DriverManager.getConnection(databaseURL, username, password);
 
             System.out.println("Connection to SQLite has been established.");
 
@@ -388,14 +386,15 @@ public class DatabaseSQLiteController implements Initializable {
 
     private void CreateSQLiteTable() {
         // SQL statement for creating a new table
-        String sql = "CREATE TABLE IF NOT EXISTS Books (\n"
+        /*String sql = "CREATE TABLE IF NOT EXISTS Books (\n"
                 + "	id integer PRIMARY KEY,\n"
                 + "	name text NOT NULL,\n"
                 + "	author text NOT NULL,\n"
                 + "	year int NOT NULL\n"
-                + ");";
+                + ");";*/
+        String sql = "SELECT 1";
 
-        try (Connection conn = DriverManager.getConnection(databaseURL);
+        try (Connection conn = DriverManager.getConnection(databaseURL, username, password);
                 Statement stmt = conn.createStatement()) {
             // create a new table
             stmt.execute(sql);
@@ -412,7 +411,7 @@ public class DatabaseSQLiteController implements Initializable {
         PreparedStatement preparedStatement = null;
         try {
             // create a connection to the database
-            conn = DriverManager.getConnection(databaseURL);
+            conn = DriverManager.getConnection(databaseURL, username, password);
 
             String sql = "DELETE FROM Books WHERE id=" + Integer.toString(id);
             String sql2 = "DELETE FROM CheckOut WHERE BookID=" + Integer.toString(id);
@@ -507,13 +506,13 @@ public class DatabaseSQLiteController implements Initializable {
         PreparedStatement preparedStatement = null;
         try {
             // create a connection to the database
-            conn = DriverManager.getConnection(databaseURL);
+            conn = DriverManager.getConnection(databaseURL, username, password);
 
             int memberToInsert =  Integer.valueOf(memberNumber.getText());
             //String sql = "INSERT INTO CheckOut (id, name, author, year) SELECT id, name, author, year FROM Books WHERE id=" + Integer.toString(id);
-            String sql = "INSERT INTO CheckOut (BookID, LibraryNumber, Name, Author, Year) SELECT BOOKS.id, Members.LibraryNumber, BOOKS.name, Books.author, Books.year FROM Books, Members "
+            String sql = "INSERT INTO CheckOut (BookID, LibraryNumber, name, author, year) SELECT BOOKS.ID, Members.LibraryNumber, BOOKS.Name, Books.Author, Books.Year FROM Books, Members "
                     +"WHERE Books.id = " +Integer.toString(id) + " AND Members.LibraryNumber= " +memberToInsert;
-            String deleteSQL = "DELETE FROM Books WHERE id=" +Integer.toString(id);       
+            String deleteSQL = "DELETE FROM Books WHERE ID=" +Integer.toString(id);       
                     //System.out.println(sql);
                     
                     /*INSERT INTO CheckOut (BookID, MemberID)
@@ -560,7 +559,7 @@ public class DatabaseSQLiteController implements Initializable {
                 System.out.println("ID: " + book.getId());
                 System.out.println("Name: " + book.getName());
                 System.out.println("Author: " + book.getAuthor());
-                System.out.println("year: " + book.getYear());
+                System.out.println("Year: " + book.getYear());
                 checkOut(book.getId(), selectedIndex);
             }
 
@@ -573,7 +572,7 @@ public class DatabaseSQLiteController implements Initializable {
         PreparedStatement preparedStatement = null;
         try {
             // create a connection to the database
-            conn = DriverManager.getConnection(databaseURL);
+            conn = DriverManager.getConnection(databaseURL, username, password);
 
             //String sql = "INSERT INTO CheckOut (id, name, author, year) SELECT id, name, author, year FROM Books WHERE id=" + Integer.toString(id);
             String sql = "INSERT INTO Books (id, name, author, year) SELECT BookID, name, author, year FROM CheckOut WHERE BookID =" + Integer.toString(id);
@@ -677,7 +676,7 @@ public class DatabaseSQLiteController implements Initializable {
         }
 
         System.out.println(sql);
-        try (Connection conn = DriverManager.getConnection(databaseURL);
+        try (Connection conn = DriverManager.getConnection(databaseURL, username, password);
                 Statement stmt = conn.createStatement()) {
             // create a ResultSet
 
@@ -739,7 +738,7 @@ public class DatabaseSQLiteController implements Initializable {
         }
 
         System.out.println(sql);
-        try (Connection conn = DriverManager.getConnection(databaseURL);
+        try (Connection conn = DriverManager.getConnection(databaseURL, username, password);
                 Statement stmt = conn.createStatement()) {
             // create a ResultSet
 
@@ -794,7 +793,7 @@ public class DatabaseSQLiteController implements Initializable {
         }
 
         System.out.println(sql);
-        try (Connection conn = DriverManager.getConnection(databaseURL);
+        try (Connection conn = DriverManager.getConnection(databaseURL, username, password);
                 Statement stmt = conn.createStatement()) {
             // create a ResultSet
 
@@ -848,7 +847,7 @@ public class DatabaseSQLiteController implements Initializable {
         Connection conn = null;
         try {
             // create a connection to the database
-            conn = DriverManager.getConnection(databaseURL);
+            conn = DriverManager.getConnection(databaseURL, username, password);
             String sql = "UPDATE Books SET name = ?, author =?, year =? Where id = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, name);
