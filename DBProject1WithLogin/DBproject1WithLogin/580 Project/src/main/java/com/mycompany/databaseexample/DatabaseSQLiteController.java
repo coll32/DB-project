@@ -54,6 +54,9 @@ public class DatabaseSQLiteController implements Initializable {
     
     @FXML
     private TextField memNameText, libNumText, bookIDTextField;
+    
+    @FXML
+    private Text errormsg;
 
     @FXML
     Label footerLabel;
@@ -153,8 +156,12 @@ public class DatabaseSQLiteController implements Initializable {
         checkedBookName.setMinWidth(300);
         checkedBookName.setCellValueFactory(new PropertyValueFactory<CheckOut, String>("name"));
         
+        TableColumn dueDate = new TableColumn("Due Date");
+        dueDate.setMinWidth(300);
+        dueDate.setCellValueFactory(new PropertyValueFactory<CheckOut, String>("dueDate"));
+        
         checkedOutView.setItems(checkOutData);
-        checkedOutView.getColumns().addAll(checkedLibNum, checkedBookNum, checkedBookName);
+        checkedOutView.getColumns().addAll(checkedLibNum, checkedBookNum, checkedBookName, dueDate);
         
         
         //tableView.setOpacity(0.3);
@@ -185,7 +192,7 @@ public class DatabaseSQLiteController implements Initializable {
                 
                 Book book;
                 book = new Book(rs.getInt("ID"), rs.getString("Name"), rs.getString("Author"), rs.getInt("Year"));
-                System.out.println( book.getId() + book.getName() + book.getAuthor() + book.getYear());
+                //System.out.println( book.getId() + book.getName() + book.getAuthor() + book.getYear());
                 data.add(book);
             }
             
@@ -196,7 +203,7 @@ public class DatabaseSQLiteController implements Initializable {
             while (rsMem.next()) {
                 Member member;
                 member = new Member(rsMem.getInt("LibraryNumber"), rsMem.getString("Name"));
-                System.out.println( member.getLibraryNumber() + member.getName());
+                //System.out.println( member.getLibraryNumber() + member.getName());
                 memData.add(member);
             }
             
@@ -206,7 +213,7 @@ public class DatabaseSQLiteController implements Initializable {
             
             while (rsCheck.next()) {
                 CheckOut checkedOut;
-                checkedOut = new CheckOut(rsCheck.getInt("LibraryNumber"), rsCheck.getInt("BookID"), rsCheck.getString("name"));
+                checkedOut = new CheckOut(rsCheck.getInt("LibraryNumber"), rsCheck.getInt("BookID"), rsCheck.getString("name"), rsCheck.getString("dueDate"));
                 System.out.println( checkedOut.getLibraryNumber() + checkedOut.getBookID());
                 checkOutData.add(checkedOut);
             }
@@ -524,13 +531,23 @@ public class DatabaseSQLiteController implements Initializable {
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
             stmt.executeUpdate(deleteSQL);
-
+            tableView.getItems().remove(selectedIndex);
+            System.out.println("Record Checked Out Successfully");
+            errormsg.setText(" ");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            if (e.getMessage().equals("Cannot have more than 3 check-out records for this library number")) {
+                errormsg.setText("Cannot check out more than 3 books");
+            } else {
+                errormsg.setText("Please Enter a Library Number");
+            }
+            
+        } catch (NumberFormatException e) {
+            errormsg.setText("Please Enter a Library Number");
         } finally {
 
-            tableView.getItems().remove(selectedIndex); //selected index != id because selected index changes based off deletions
-            System.out.println("Record Checked Out Successfully");
+            //tableView.getItems().remove(selectedIndex); //selected index != id because selected index changes based off deletions
+            
             try {
                 if (conn != null) {
                     conn.close();

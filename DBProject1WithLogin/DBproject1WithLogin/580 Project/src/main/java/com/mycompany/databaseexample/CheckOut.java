@@ -14,11 +14,18 @@ public class CheckOut {
     private String name;
     private String author;
     private int year;
+    private String dueDate;
     //dont need to have constructor for all data, just for what you want to show in table
     public CheckOut(int LibraryNumber , int bookID, String name) {
         this.BookID = bookID;
         this.LibraryNumber = LibraryNumber;
         this.name = name;
+    }
+    public CheckOut(int LibraryNumber , int bookID, String name, String dueDate) {
+        this.BookID = bookID;
+        this.LibraryNumber = LibraryNumber;
+        this.name = name;
+        this.dueDate = dueDate;
     }
 
     /**
@@ -40,6 +47,12 @@ public class CheckOut {
      */
     public int getLibraryNumber() {
         return LibraryNumber;
+    }
+    public String getDueDate() {
+        return dueDate;
+    }
+    public void setDueDate(String dueDate) {
+        this.dueDate = dueDate;
     }
 
     /**
