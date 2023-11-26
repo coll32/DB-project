@@ -21,6 +21,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -45,6 +46,15 @@ public class DatabaseSQLiteController implements Initializable {
     private TableView memberView = new TableView<Member>();
     @FXML
     private TableView checkedOutView = new TableView<CheckOut>();
+    
+    @FXML
+    private TableView logsView = new TableView<Logs>();
+    
+    @FXML
+    private TableView overdueView = new TableView<CheckOut>();
+    
+    @FXML
+    private ToggleButton overdueToggle;
 
     @FXML
     private VBox vBox; //like the outer section of ui
@@ -56,7 +66,13 @@ public class DatabaseSQLiteController implements Initializable {
     private TextField memNameText, libNumText, bookIDTextField;
     
     @FXML
+    private TextField bookIDText, actionText, actionDateText, timesCheckedText;
+    
+    @FXML
     private Text errormsg;
+    
+    @FXML
+    private Text recordUpdate;
 
     @FXML
     Label footerLabel;
@@ -84,6 +100,7 @@ public class DatabaseSQLiteController implements Initializable {
     private ObservableList<Book> data; //object that holds data
     private ObservableList<Member> memData;
     private ObservableList<CheckOut> checkOutData;
+    private ObservableList<Logs> logData;
 
     /*
        ArrayList: Resizable-array implementation of the List interface. 
@@ -96,6 +113,7 @@ public class DatabaseSQLiteController implements Initializable {
         this.data = FXCollections.observableArrayList();
         this.memData = FXCollections.observableArrayList();
         this.checkOutData = FXCollections.observableArrayList();
+        this.logData = FXCollections.observableArrayList();
     }
 
     private void intializeColumns() {
@@ -163,9 +181,26 @@ public class DatabaseSQLiteController implements Initializable {
         checkedOutView.setItems(checkOutData);
         checkedOutView.getColumns().addAll(checkedLibNum, checkedBookNum, checkedBookName, dueDate);
         
+        //logTable
+        TableColumn logBookNum = new TableColumn("BookID");
+        logBookNum.setMinWidth(100);
+        logBookNum.setCellValueFactory(new PropertyValueFactory<Logs, Integer>("BookID"));
         
-        //tableView.setOpacity(0.3);
-        /* Allow for the values in each cell to be changable */
+        TableColumn logAction = new TableColumn("LastAction");
+        logAction.setMinWidth(100);
+        logAction.setCellValueFactory(new PropertyValueFactory<Logs, String>("LastAction"));
+        
+        TableColumn logActionTime = new TableColumn("LastActionTime");
+        logActionTime.setMinWidth(100);
+        logActionTime.setCellValueFactory(new PropertyValueFactory<Logs, String>("LastActionTime"));
+        
+        TableColumn logCheckedNum = new TableColumn("TimesCheckedOut");
+        logCheckedNum.setMinWidth(100);
+        logCheckedNum.setCellValueFactory(new PropertyValueFactory<Logs, Integer>("TimesCheckedOut"));
+        
+        logsView.setItems(logData);
+        logsView.getColumns().addAll(logBookNum,logAction,logActionTime, logCheckedNum );
+       
     }
 
     public void loadData() throws SQLException {
@@ -183,6 +218,7 @@ public class DatabaseSQLiteController implements Initializable {
             String sql = "SELECT * FROM Books;";
             String sql2 = "SELECT * FROM Members;";
             String sql3 = "SELECT * FROM CheckOut";
+            String sql4 = "SELECT * FROM BookLog";
             // Ensure we can query the actors table
             stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
@@ -217,10 +253,22 @@ public class DatabaseSQLiteController implements Initializable {
                 System.out.println( checkedOut.getLibraryNumber() + checkedOut.getBookID());
                 checkOutData.add(checkedOut);
             }
+            
+            stmt = conn.createStatement();
+            ResultSet rsLogs = stmt.executeQuery(sql4);
+            //System.out.println( rsMem.getString("Name"));
+            
+            while (rsLogs.next()) {
+                Logs log;
+                //checkedOut = new CheckOut(rsCheck.getInt("LibraryNumber"), rsCheck.getInt("BookID"), rsCheck.getString("name"), rsCheck.getString("dueDate"));
+                log = new Logs(rsLogs.getInt("BookID"), rsLogs.getString("LastAction"), rsLogs.getString("LastActionTime"), rsLogs.getInt("TimesCheckedOut"));
+                logData.add(log);
+            }
 
             rs.close();
             rsMem.close();
             rsCheck.close();
+            rsLogs.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } finally {
@@ -278,18 +326,30 @@ public class DatabaseSQLiteController implements Initializable {
             System.out.println("Connection to SQLite has been established.");
 
             System.out.println("Inserting one record!");
+            Statement stmt = conn.createStatement();
+            ResultSet rs2 = stmt.executeQuery("SELECT MAX(ID) FROM Books");
+            int maxId = 0;
 
-            String sql = "INSERT INTO Books(name, author, year) VALUES(?,?,?)";
+            if (rs2.next()) {
+                maxId = rs2.getInt(1); // Retrieve the maximum ID
+            }
+
+            String sql = "INSERT INTO Books(ID, Name, Author, Year) VALUES(?,?,?,?)";
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, name);
-            pstmt.setString(2, author);
-            pstmt.setInt(3, year);
+            
+            pstmt.setInt(1, maxId+1);
+            pstmt.setString(2, name);
+            pstmt.setString(3, author);
+            pstmt.setInt(4, year);
             pstmt.executeUpdate();
+            
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
                 last_inserted_id = rs.getInt(1);
             }
+            
+            
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -310,7 +370,6 @@ public class DatabaseSQLiteController implements Initializable {
 
     @FXML
     public void handleAddMovie(ActionEvent actionEvent) {
-
         System.out.println("Name: " + nameTextField.getText() + "\nAuthor: " + authorTextField.getText() + "\nYear: " + yearTextField.getText());
 
         try {
@@ -329,6 +388,8 @@ public class DatabaseSQLiteController implements Initializable {
         footerLabel.setText("Record inserted into table successfully!");
     }
     
+    
+    
     public void insertMember(String name) throws SQLException {
         int last_inserted_id = 0;
         Connection conn = null;
@@ -341,7 +402,7 @@ public class DatabaseSQLiteController implements Initializable {
 
             System.out.println("Inserting one record!");
 
-            String sql = "INSERT INTO Members(name, LibraryNumber) VALUES(?,?)";
+            String sql = "INSERT INTO Members(name) VALUES(?)";
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, name);
@@ -539,7 +600,7 @@ public class DatabaseSQLiteController implements Initializable {
             if (e.getMessage().equals("Cannot have more than 3 check-out records for this library number")) {
                 errormsg.setText("Cannot check out more than 3 books");
             } else {
-                errormsg.setText("Please Enter a Library Number");
+                errormsg.setText(e.getMessage());
             }
             
         } catch (NumberFormatException e) {
@@ -596,21 +657,19 @@ public class DatabaseSQLiteController implements Initializable {
             String sql2 = "DELETE FROM CheckOut WHERE BookID =" +Integer.toString(id);
             
             
-                    /*INSERT INTO CheckOut (BookID, MemberID)
-                    SELECT Books.id, Members.LibraryNumber
-                    FROM Books, Members
-                    WHERE Books.id = 100
-                    AND Members.LibraryNumber = 222;*/
+               
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
             stmt.executeUpdate(sql2);
+            checkedOutView.getItems().remove(selectedIndex); //selected index != id because selected index changes based off deletions
+            System.out.println("Record Checked in Successfully");
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } finally {
 
-            checkedOutView.getItems().remove(selectedIndex); //selected index != id because selected index changes based off deletions
-            System.out.println("Record Checked in Successfully");
+            //checkedOutView.getItems().remove(selectedIndex); //selected index != id because selected index changes based off deletions
+            //System.out.println("Record Checked in Successfully");
             try {
                 if (conn != null) {
                     conn.close();
@@ -648,6 +707,50 @@ public class DatabaseSQLiteController implements Initializable {
 
     Integer index = -1;
 
+     public void addToOverdue() {
+
+        Connection conn = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            // create a connection to the database
+            conn = DriverManager.getConnection(databaseURL, username, password);
+
+            //String sql = "INSERT INTO CheckOut (id, name, author, year) SELECT id, name, author, year FROM Books WHERE id=" + Integer.toString(id);
+            
+            String sql = "INSERT INTO Overdue (LibraryNumber, BookID, DueDate) "
+          + "SELECT LibraryNumber, BookID, DueDate "
+          + "FROM CheckOut WHERE DueDate < GETDATE() "
+          + "AND NOT EXISTS (SELECT 1 FROM Overdue WHERE Overdue.LibraryNumber = CheckOut.LibraryNumber AND Overdue.BookID = CheckOut.BookID AND Overdue.DueDate = CheckOut.DueDate);";
+
+            
+               
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+      
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+
+           
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+
+    }
+     
+     @FXML
+    private void handleAddToOverdue(ActionEvent event) throws IOException {
+        
+        //Check whether item is selected and set value of selected item to Label
+        addToOverdue();
+        recordUpdate.setText("Overdue Records Updated");
+    }
     @FXML
     private void showRowData() {
 
@@ -679,17 +782,17 @@ public class DatabaseSQLiteController implements Initializable {
         ObservableList<Book> searchResult = FXCollections.observableArrayList();
         // read data from SQLite database
         CreateSQLiteTable();
-        String sql = "Select * from Books where true"; //querey
+        String sql = "Select * from Books where"; //querey
 
         if (!_name.isEmpty()) {
-            sql += " and name like '%" + _name + "%'";
+            sql += " Name like '%" + _name + "%'";
         }
         if (!_year.isEmpty()) {
-            sql += " and year ='" + _year + "'";
+            sql += " and Year ='" + _year + "'";
         }
 
         if (!_author.isEmpty()) {
-            sql += " and author like '%" + _author + "%'";
+            sql += " and Author like '%" + _author + "%'";
         }
 
         System.out.println(sql);
@@ -745,10 +848,10 @@ public class DatabaseSQLiteController implements Initializable {
         ObservableList<Member> searchResult = FXCollections.observableArrayList();
         // read data from SQLite database
         CreateSQLiteTable();
-        String sql = "Select * from Members where true"; //querey
+        String sql = "Select * from Members where"; //querey
 
         if (!_name.isEmpty()) {
-            sql += " and name like '%" + _name + "%'";
+            sql += " name like '%" + _name + "%'";
         }
         if (!_libraryNumber.isEmpty()) {
             sql += " and LibraryNumber ='" + _libraryNumber + "'";
@@ -797,10 +900,10 @@ public class DatabaseSQLiteController implements Initializable {
         ObservableList<CheckOut> searchResult = FXCollections.observableArrayList();
         // read data from SQLite database
         CreateSQLiteTable();
-        String sql = "Select * from CheckOut where true"; //querey
+        String sql = "Select * from CheckOut where"; //querey
 
         if (!_name.isEmpty()) {
-            sql += " and Name like '%" + _name + "%'";
+            sql += " Name like '%" + _name + "%'";
         }
         if (!_libraryNumber.isEmpty()) {
             sql += " and LibraryNumber ='" + _libraryNumber + "'";
@@ -842,12 +945,83 @@ public class DatabaseSQLiteController implements Initializable {
     }
     
     
+    @FXML
+    private void handleLogSearchAction(ActionEvent event) throws IOException, SQLException {
+        /* String _BookID = bookIDTextField.getText().trim();
+        String _LibraryNumber = memberNumber.getText().trim();
+        String _name = nameTextField.getText().trim();
+        ObservableList<CheckOut> memItems = searchCheckOut(_LibraryNumber, _BookID, _name);
+        checkedOutView.setItems(memItems);*/
+        String _BookID = bookIDText.getText().trim();
+        String _action = actionText.getText().trim();
+        String _actionDate = actionDateText.getText().trim();
+        String _timesChecked = timesCheckedText.getText().trim();
+        ObservableList<Logs> logItems = searchLogs(_BookID, _action, _actionDate, _timesChecked);
+        logsView.setItems(logItems);
 
+    }
+    @SuppressWarnings("empty-statement")
+    public ObservableList<Logs> searchLogs(String _BookID, String _action, String _actionDate, String _timesChecked) throws SQLException {
+        ObservableList<Logs> searchResult = FXCollections.observableArrayList();
+        // read data from SQLite database
+        CreateSQLiteTable();
+        String sql = "Select * from BookLog where"; //querey
+
+        if (!_BookID.isEmpty()) {
+            sql += " BookID ='" + _BookID + "'";
+        }
+        if (!_action.isEmpty()) {
+            sql += " and LastAction like '%" + _action + "%'";
+        }
+        
+        if (!_actionDate.isEmpty()) {
+            sql += " and LastActionTime like '%" + _actionDate + "%'";
+        }
+        if (!_timesChecked.isEmpty()) {
+            sql += " and TimesCheckedOut ='" + _timesChecked + "'";
+        }
+
+        System.out.println(sql);
+        try (Connection conn = DriverManager.getConnection(databaseURL, username, password);
+                Statement stmt = conn.createStatement()) {
+            // create a ResultSet
+
+            ResultSet rs = stmt.executeQuery(sql); //
+            // checking if ResultSet is empty
+            if (rs.next() == false) {
+                System.out.println("ResultSet in empty");
+            } else {
+                // loop through the result set
+                do {
+
+                    /* int libraryNumber = Integer.parseInt(rs.getString("LibraryNumber"));
+                    int bookNum = Integer.parseInt(rs.getString("BookID"));
+                    String bookName = rs.getString("Name");*/
+                    
+                    int bookID = Integer.parseInt(rs.getString("BookID"));
+                    String action = rs.getString("LastAction");
+                    String actionDate = rs.getString("LastActionTime");
+                    int timesCheckedOut = Integer.parseInt(rs.getString("TimesCheckedOut"));
+                 
+                    Logs log = new Logs(bookID, action, actionDate, timesCheckedOut);
+                    //Movie movie = new Movie(recordId, title, year, rating);
+                    //Book book = new Book(recordId, name, author, year);
+                    
+                    searchResult.add(log);
+                } while (rs.next());
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return searchResult;
+    }
     @FXML
     private void handleShowAllRecords(ActionEvent event) throws IOException, SQLException {
         tableView.setItems(data);
         memberView.setItems(memData);
         checkedOutView.setItems(checkOutData);
+        logsView.setItems(logData);
 
     }
 
@@ -928,102 +1102,18 @@ public class DatabaseSQLiteController implements Initializable {
         }
 
     }
-
-    @FXML
-    private void sidebarShowAllRecords() {
-        tableView.setItems(data);
-    }
-
-    @FXML
-    private void sidebarAddNewRecord() {
-        System.out.println("Title: " + nameTextField.getText() + "\nYear: " + authorTextField.getText() + "\nRating: " + yearTextField.getText());
-
-        try {
-            // insert a new rows
-            //insert(nameTextField.getText(), Integer.parseInt(authorTextField.getText()), yearTextField.getText());
-            insert(nameTextField.getText(), authorTextField.getText(), Integer.parseInt(yearTextField.getText()));
-            System.out.println("Data was inserted Successfully");
-        } catch (SQLException ex) {
-            System.out.println(ex.toString());
-        }
-
-        nameTextField.setText("");
-        authorTextField.setText("");
-        yearTextField.setText("");
-
-        footerLabel.setText("Record inserted into table successfully!");
-
-    }
-
-    @FXML
-    private void sidebarDeleteRecord() {
-        System.out.println("Delete Movie");
-        //Check whether item is selected and set value of selected item to Label
-        if (tableView.getSelectionModel().getSelectedItem() != null) {
-
-            int selectedIndex = tableView.getSelectionModel().getSelectedIndex();
-            System.out.println("Selected Index: " + selectedIndex);
-
-            if (selectedIndex >= 0) {
-
-                System.out.println("Handle Delete Action");
-                System.out.println(index);
-                //Movie movie = (Movie) tableView.getSelectionModel().getSelectedItem();
-                Book book = (Book) tableView.getSelectionModel().getSelectedItem();
-                System.out.println("ID: " + book.getId());
-                System.out.println("Name: " + book.getName());
-                System.out.println("Auhtor: " + book.getAuthor());
-                System.out.println("Year: " + book.getYear());
-                deleteRecord(book.getId(), selectedIndex);
-            }
-
-        }
-    }
-
-    @FXML
-    private void sidebarSearch() throws SQLException {
-        String _name = nameTextField.getText().trim();
-        String _author = authorTextField.getText().trim();
-        String _year = yearTextField.getText().trim();
-        ObservableList<Book> tableItems = search(_name, _author, _year);
-        tableView.setItems(tableItems);
-    }
+    
+    
 
     
-     @FXML
-    private void sidebarUpdateRecord() throws SQLException {
-        //Check whether item is selected and set value of selected item to Label
-        if (tableView.getSelectionModel().getSelectedItem() != null) {
+    @FXML
+    public void toggleTableView() {
+        boolean isVisible = checkedOutView.isVisible();
+        checkedOutView.setVisible(!isVisible); // Toggle visibility
+    }
 
-            int selectedIndex = tableView.getSelectionModel().getSelectedIndex();
-            System.out.println("Selected Index: " + selectedIndex);
 
-            if (selectedIndex >= 0) {
-
-                System.out.println(index);
-                //Movie movie = (Movie) tableView.getSelectionModel().getSelectedItem();
-                Book book = (Book) tableView.getSelectionModel().getSelectedItem();
-                System.out.println("ID: " + book.getId());
-
-                try {
-                    // insert a new rows
-                    //update(nameTextField.getText(), Integer.parseInt(authorTextField.getText()), yearTextField.getText(), selectedIndex, movie.getId());
-                    update(nameTextField.getText(), authorTextField.getText(), Integer.parseInt(yearTextField.getText()), selectedIndex, book.getId());
-                    System.out.println("Record updated successfully!");
-                } catch (SQLException ex) {
-                    System.out.println(ex.toString());
-                }
-
-                nameTextField.setText("");
-                authorTextField.setText("");
-                yearTextField.setText("");
-
-                footerLabel.setText("Record updated successfully!");
-                data.clear();
-                loadData();
-                tableView.refresh();
-            }
-        }
-    }   
+    
+     
     
 }

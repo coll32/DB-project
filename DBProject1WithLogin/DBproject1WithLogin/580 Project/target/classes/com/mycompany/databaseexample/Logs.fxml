@@ -40,32 +40,29 @@
     <left>
         <VBox prefHeight="588.0" prefWidth="192.0" styleClass="sidebar-section">
             <children>
-            <Button mnemonicParsing="false" onAction="#handleCheckInAction" prefHeight="34.0" prefWidth="222.0" styleClass="btn-primary" stylesheets="@styles.css" text="Check In" />
-            <Button mnemonicParsing="false" onAction="#handleDeleteAction" prefHeight="34.0" prefWidth="202.0" styleClass="btn-danger" stylesheets="@styles.css" text="Delete" />
-            <Button mnemonicParsing="false" onAction="#handleCheckOutSearchAction" prefHeight="34.0" prefWidth="207.0" styleClass="btn-warning" stylesheets="@styles.css" text="Search" />
+            <Button mnemonicParsing="false" onAction="#handleLogSearchAction" prefHeight="34.0" prefWidth="207.0" styleClass="btn-warning" stylesheets="@styles.css" text="Search" />
             <Button mnemonicParsing="false" onAction="#handleShowAllRecords" prefHeight="34.0" prefWidth="213.0" styleClass="btn-success" stylesheets="@styles.css" text="Show All Records" />
-            <TextField fx:id="memberNumber" prefWidth="175.0" promptText="Library Number" stylesheets="@styles.css" />
-            <TextField fx:id="bookIDTextField" prefWidth="175.0" promptText="Book ID" stylesheets="@styles.css" />
-            <TextField fx:id="nameTextField" prefWidth="175.0" promptText="Book Name" stylesheets="@styles.css" />
+            <TextField fx:id="bookIDText" prefWidth="175.0" promptText="Book ID" stylesheets="@styles.css" />
+            <TextField fx:id="actionText" prefWidth="175.0" promptText="Action" stylesheets="@styles.css" />
+            <TextField fx:id="actionDateText" prefWidth="175.0" promptText="Action Time" stylesheets="@styles.css" />
+            <TextField fx:id="timesCheckedText" prefWidth="175.0" promptText="Times Checked Out" stylesheets="@styles.css" />
             </children>
         </VBox>
     </left>
     <center>
         <VBox fx:id="vBox" minHeight="600.0" prefHeight="500.0" styleClass="content-section">
             <children>
-                <Label id="content-header" stylesheets="@demo.css" text="Checked Out Books" textFill="#11c3c6" />
+                <Label id="content-header" stylesheets="@demo.css" text="Logs" textFill="#11c3c6" />
             
                 <!-- container using pref size as max size to not grow larger than the image -->
                 <VBox maxHeight="-Infinity" maxWidth="-Infinity" styleClass="my-rect" stylesheets="@demo.css" />  
             
             
                 <Label id="content" styleClass="content-section" stylesheets="@demo.css" />
-                <TableView fx:id="checkedOutView" onMouseClicked="#showRowData" prefHeight="340.0" prefWidth="741.0" />
+                <TableView fx:id="logsView" onMouseClicked="#showRowData" prefHeight="340.0" prefWidth="741.0" />
                 
                             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#handleCheckInAction" prefHeight="34.0" prefWidth="110.0" styleClass="btn-primary" stylesheets="@styles.css" text="Check In" />
-                  <Button mnemonicParsing="false" onAction="#handleAddToOverdue" prefHeight="34.0" prefWidth="158.0" styleClass="btn-primary" stylesheets="@styles.css" text="Update Overdue" />
                   <Text fx:id="recordUpdate" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0">
                      <font>
                         <Font size="24.0" />
@@ -73,10 +70,7 @@
                   </Text>
                </children>
             </HBox>
-            <HBox prefHeight="168.0" prefWidth="741.0" spacing="10.0">
-               <children>
-                  <ToggleButton fx:id="overdueToggle" mnemonicParsing="false" onAction="#toggleTableView" styleClass="btn-primary" stylesheets="@styles.css" text="Filter Overdue" />
-               </children></HBox>
+            <HBox prefHeight="168.0" prefWidth="741.0" spacing="10.0" />
                 
             </children>
             </VBox>

@@ -65,9 +65,18 @@
                             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                <children>
                   <Button mnemonicParsing="false" onAction="#handleCheckInAction" prefHeight="34.0" prefWidth="110.0" styleClass="btn-primary" stylesheets="@styles.css" text="Check In" />
+                  <Button mnemonicParsing="false" onAction="#handleAddToOverdue" prefHeight="34.0" prefWidth="158.0" styleClass="btn-primary" stylesheets="@styles.css" text="Update Overdue" />
+                  <Text fx:id="recordUpdate" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Text>
                </children>
             </HBox>
-            <HBox prefHeight="168.0" prefWidth="741.0" spacing="10.0" />
+            <HBox prefHeight="168.0" prefWidth="741.0" spacing="10.0">
+               <children>
+                  <ToggleButton fx:id="overdueToggle" mnemonicParsing="false" onAction="#toggleTableView" styleClass="btn-primary" stylesheets="@styles.css" text="Filter Overdue" />
+               </children></HBox>
                 
             </children>
             </VBox>
