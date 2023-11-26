@@ -60,7 +60,7 @@
             
             
                 <Label id="content" styleClass="content-section" stylesheets="@demo.css" />
-                <TableView fx:id="checkedOutView" onMouseClicked="#showRowData" prefHeight="340.0" prefWidth="741.0" />
+                <TableView fx:id="checkedOutView" onMouseClicked="#showRowData" prefHeight="340.0" prefWidth="741.0" VBox.vgrow="ALWAYS" />
                 
                             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                <children>
@@ -73,10 +73,7 @@
                   </Text>
                </children>
             </HBox>
-            <HBox prefHeight="168.0" prefWidth="741.0" spacing="10.0">
-               <children>
-                  <ToggleButton fx:id="overdueToggle" mnemonicParsing="false" onAction="#toggleTableView" styleClass="btn-primary" stylesheets="@styles.css" text="Filter Overdue" />
-               </children></HBox>
+            <HBox prefHeight="168.0" prefWidth="741.0" spacing="10.0" />
                 
             </children>
             </VBox>

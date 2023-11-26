@@ -7,10 +7,12 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import javafx.collections.transformation.FilteredList;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ResourceBundle;
+import java.time.LocalDate;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -51,7 +53,7 @@ public class DatabaseSQLiteController implements Initializable {
     private TableView logsView = new TableView<Logs>();
     
     @FXML
-    private TableView overdueView = new TableView<CheckOut>();
+    private TableView overdueView = new TableView<Overdue>();
     
     @FXML
     private ToggleButton overdueToggle;
@@ -101,6 +103,7 @@ public class DatabaseSQLiteController implements Initializable {
     private ObservableList<Member> memData;
     private ObservableList<CheckOut> checkOutData;
     private ObservableList<Logs> logData;
+    private ObservableList<Overdue> overdueData;
 
     /*
        ArrayList: Resizable-array implementation of the List interface. 
@@ -114,6 +117,7 @@ public class DatabaseSQLiteController implements Initializable {
         this.memData = FXCollections.observableArrayList();
         this.checkOutData = FXCollections.observableArrayList();
         this.logData = FXCollections.observableArrayList();
+        this.overdueData = FXCollections.observableArrayList();
     }
 
     private void intializeColumns() {
@@ -200,7 +204,22 @@ public class DatabaseSQLiteController implements Initializable {
         
         logsView.setItems(logData);
         logsView.getColumns().addAll(logBookNum,logAction,logActionTime, logCheckedNum );
+        
+        //overdueTable
+        TableColumn overdueNum = new TableColumn("LibraryNumber");
+        overdueNum.setMinWidth(100);
+        overdueNum.setCellValueFactory(new PropertyValueFactory<Overdue, Integer>("LibraryNumber"));
+        
+        TableColumn overdueBookID = new TableColumn("BookID");
+        overdueBookID.setMinWidth(100);
+        overdueBookID.setCellValueFactory(new PropertyValueFactory<Overdue, Integer>("BookID"));
        
+        TableColumn overdueDate = new TableColumn("DueDate");
+        overdueDate.setMinWidth(100);
+        overdueDate.setCellValueFactory(new PropertyValueFactory<Overdue, String>("DueDate"));
+        
+        overdueView.setItems(overdueData);
+        overdueView.getColumns().addAll(overdueNum, overdueBookID, overdueDate);
     }
 
     public void loadData() throws SQLException {
@@ -219,6 +238,7 @@ public class DatabaseSQLiteController implements Initializable {
             String sql2 = "SELECT * FROM Members;";
             String sql3 = "SELECT * FROM CheckOut";
             String sql4 = "SELECT * FROM BookLog";
+            String sql5 = "SELECT * FROM Overdue";
             // Ensure we can query the actors table
             stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
@@ -264,11 +284,23 @@ public class DatabaseSQLiteController implements Initializable {
                 log = new Logs(rsLogs.getInt("BookID"), rsLogs.getString("LastAction"), rsLogs.getString("LastActionTime"), rsLogs.getInt("TimesCheckedOut"));
                 logData.add(log);
             }
+            
+            stmt = conn.createStatement();
+            ResultSet rsover = stmt.executeQuery(sql5);
+            //System.out.println( rsMem.getString("Name"));
+            
+            while (rsover.next()) {
+                Overdue overdue;
+                //checkedOut = new CheckOut(rsCheck.getInt("LibraryNumber"), rsCheck.getInt("BookID"), rsCheck.getString("name"), rsCheck.getString("dueDate"));
+                overdue = new Overdue(rsover.getInt("LibraryNumber"), rsover.getInt("BookID"), rsover.getString("DueDate"));
+                overdueData.add(overdue);
+            }
 
             rs.close();
             rsMem.close();
             rsCheck.close();
             rsLogs.close();
+            rsover.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } finally {
@@ -1103,15 +1135,9 @@ public class DatabaseSQLiteController implements Initializable {
 
     }
     
+   
     
-
-    
-    @FXML
-    public void toggleTableView() {
-        boolean isVisible = checkedOutView.isVisible();
-        checkedOutView.setVisible(!isVisible); // Toggle visibility
-    }
-
+   
 
     
      

@@ -118,6 +118,19 @@ public class MainController {
         }
 
     }  
+    @FXML
+    private void overdue() throws IOException {
+
+        try {
+            Pane newLoadedPane = FXMLLoader.load(getClass().getResource("overdue.fxml"));
+            contentPane.getChildren().clear();
+            contentPane.getChildren().add(newLoadedPane);
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+    }  
     
     
     @FXML

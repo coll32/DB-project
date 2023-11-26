@@ -29,6 +29,7 @@
                   <MenuItem mnemonicParsing="false" onAction="#members" text="Members" />
                   <MenuItem mnemonicParsing="false" onAction="#checkedOut" text="Checked Out" />
                   <MenuItem mnemonicParsing="false" onAction="#logs" text="Logs" />
+                  <MenuItem mnemonicParsing="false" onAction="#overdue" text="Banned List" />
             </items>
           </Menu>
         </menus>
