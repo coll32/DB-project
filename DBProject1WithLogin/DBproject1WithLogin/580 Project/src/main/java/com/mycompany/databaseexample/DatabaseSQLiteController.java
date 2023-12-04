@@ -5,6 +5,7 @@ package com.mycompany.databaseexample;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.Timestamp;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import javafx.collections.transformation.FilteredList;
@@ -54,6 +55,8 @@ public class DatabaseSQLiteController implements Initializable {
     
     @FXML
     private TableView overdueView = new TableView<Overdue>();
+    @FXML
+    private TableView roomView = new TableView<LibraryRoom>();
     
     @FXML
     private ToggleButton overdueToggle;
@@ -69,7 +72,8 @@ public class DatabaseSQLiteController implements Initializable {
     
     @FXML
     private TextField bookIDText, actionText, actionDateText, timesCheckedText;
-    
+    @FXML
+    private TextField dateToReserve;
     @FXML
     private Text errormsg;
     
@@ -104,6 +108,7 @@ public class DatabaseSQLiteController implements Initializable {
     private ObservableList<CheckOut> checkOutData;
     private ObservableList<Logs> logData;
     private ObservableList<Overdue> overdueData;
+    private ObservableList<LibraryRoom> roomData;
 
     /*
        ArrayList: Resizable-array implementation of the List interface. 
@@ -118,6 +123,7 @@ public class DatabaseSQLiteController implements Initializable {
         this.checkOutData = FXCollections.observableArrayList();
         this.logData = FXCollections.observableArrayList();
         this.overdueData = FXCollections.observableArrayList();
+        this.roomData = FXCollections.observableArrayList();
     }
 
     private void intializeColumns() {
@@ -220,6 +226,26 @@ public class DatabaseSQLiteController implements Initializable {
         
         overdueView.setItems(overdueData);
         overdueView.getColumns().addAll(overdueNum, overdueBookID, overdueDate);
+        
+        TableColumn roomNumber = new TableColumn("RoomNumber");
+        roomNumber.setMinWidth(100);
+        roomNumber.setCellValueFactory(new PropertyValueFactory<LibraryRoom, Integer>("RoomNumber"));
+        
+        TableColumn reservedBy = new TableColumn("ReservedBy");
+        reservedBy.setMinWidth(100);
+        reservedBy.setCellValueFactory(new PropertyValueFactory<LibraryRoom, Integer>("ReservedBy"));
+        
+        TableColumn dateReserved = new TableColumn("DateReserved");
+        dateReserved.setMinWidth(100);
+        dateReserved.setCellValueFactory(new PropertyValueFactory<LibraryRoom, String>("DateReserved"));
+        
+        TableColumn reservedOn = new TableColumn("ReservedOn");
+        reservedOn.setMinWidth(100);
+        reservedOn.setCellValueFactory(new PropertyValueFactory<LibraryRoom, String>("ReservedOn"));
+        
+        roomView.setItems(roomData);
+        roomView.getColumns().addAll(roomNumber, reservedBy, dateReserved,reservedOn);
+        
     }
 
     public void loadData() throws SQLException {
@@ -239,6 +265,7 @@ public class DatabaseSQLiteController implements Initializable {
             String sql3 = "SELECT * FROM CheckOut";
             String sql4 = "SELECT * FROM BookLog";
             String sql5 = "SELECT * FROM Overdue";
+            String sql6 = "SELECT * FROM StudyRooms";
             // Ensure we can query the actors table
             stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
@@ -295,12 +322,23 @@ public class DatabaseSQLiteController implements Initializable {
                 overdue = new Overdue(rsover.getInt("LibraryNumber"), rsover.getInt("BookID"), rsover.getString("DueDate"));
                 overdueData.add(overdue);
             }
+            
+            stmt = conn.createStatement();
+            ResultSet rsRoom = stmt.executeQuery(sql6);
+            
+            while (rsRoom.next()) {
+                LibraryRoom room;
+                //checkedOut = new CheckOut(rsCheck.getInt("LibraryNumber"), rsCheck.getInt("BookID"), rsCheck.getString("name"), rsCheck.getString("dueDate"));
+                room = new LibraryRoom(rsRoom.getInt("RoomNumber"), rsRoom.getInt("ReservedBy"), rsRoom.getString("DateReserved"), rsRoom.getString("ReservedOn"));
+                roomData.add(room);
+            }
 
             rs.close();
             rsMem.close();
             rsCheck.close();
             rsLogs.close();
             rsover.close();
+            rsRoom.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } finally {
@@ -631,7 +669,9 @@ public class DatabaseSQLiteController implements Initializable {
             System.out.println(e.getMessage());
             if (e.getMessage().equals("Cannot have more than 3 check-out records for this library number")) {
                 errormsg.setText("Cannot check out more than 3 books");
-            } else {
+            } else if (e.getMessage().equals("The transaction ended in the trigger. The batch has been aborted.")){
+                errormsg.setText("This book has just been checked out.");
+            }else {
                 errormsg.setText(e.getMessage());
             }
             
@@ -857,7 +897,141 @@ public class DatabaseSQLiteController implements Initializable {
 
         return searchResult;
     }
+    public void reserveRoom(int id, int selectedIndex) {
 
+        Connection conn = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            // create a connection to the database
+            conn = DriverManager.getConnection(databaseURL, username, password);
+
+            int reservedBy = Integer.valueOf(memberNumber.getText());
+            String dateReserved = dateToReserve.getText();
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis()); // Get current timestamp
+            String sql = "UPDATE StudyRooms SET ReservedBy = ?, ReservedOn = ?, DateReserved = ? WHERE RoomNumber = ?";
+        
+            preparedStatement = conn.prepareStatement(sql);
+
+       
+            preparedStatement.setInt(1, reservedBy);
+            preparedStatement.setString(2, dateReserved);
+            preparedStatement.setTimestamp(3, currentTime); // Set current timestamp
+            preparedStatement.setInt(4, id);
+
+            
+            int rowsUpdated = preparedStatement.executeUpdate();
+            
+            
+               
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+
+            System.out.println("Record reserved Successfully");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+
+            //checkedOutView.getItems().remove(selectedIndex); //selected index != id because selected index changes based off deletions
+            //System.out.println("Record Checked in Successfully");
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+
+    }
+    @FXML
+    private void handleReserveRoom(ActionEvent event) throws IOException {
+        System.out.println("reserveRoom");
+        //Check whether item is selected and set value of selected item to Label
+        if (roomView.getSelectionModel().getSelectedItem() != null) {
+
+            int selectedIndex = roomView.getSelectionModel().getSelectedIndex();
+            System.out.println("Selected Index: " + selectedIndex);
+
+            if (selectedIndex >= 0) {
+
+                System.out.println("Handle room Reserve Action");
+                System.out.println(index);
+                //Movie movie = (Movie) tableView.getSelectionModel().getSelectedItem();
+                LibraryRoom room = (LibraryRoom) roomView.getSelectionModel().getSelectedItem();
+                System.out.println("room num: " + room.getRoomNumber());
+                System.out.println("reserved by: " + room.getReservedBy());
+                System.out.println("reserved on: " + room.getReservedOn());
+                System.out.println("date reserved: " + room.getDateReserved());
+                reserveRoom(room.getRoomNumber(), selectedIndex);
+            }
+
+        }
+    }
+    
+    public void removeReservation(int id, int selectedIndex) {
+
+        Connection conn = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            // create a connection to the database
+            conn = DriverManager.getConnection(databaseURL, username, password);
+
+            String sql = "UPDATE StudyRooms SET ReservedBy = NULL, DateReserved = NULL, ReservedOn = NULL WHERE RoomNumber = ?";
+            // Set current timestamp
+            preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+
+            
+            int rowsUpdated = preparedStatement.executeUpdate();
+            
+            
+               
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+
+            System.out.println("Record reserved Successfully");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+
+            //checkedOutView.getItems().remove(selectedIndex); //selected index != id because selected index changes based off deletions
+            //System.out.println("Record Checked in Successfully");
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+
+    }
+    @FXML
+    private void handleRemoveReservation(ActionEvent event) throws IOException {
+        System.out.println("reserveRoom");
+        //Check whether item is selected and set value of selected item to Label
+        if (roomView.getSelectionModel().getSelectedItem() != null) {
+
+            int selectedIndex = roomView.getSelectionModel().getSelectedIndex();
+            System.out.println("Selected Index: " + selectedIndex);
+
+            if (selectedIndex >= 0) {
+
+                System.out.println("Handle room Reserve Action");
+                System.out.println(index);
+                //Movie movie = (Movie) tableView.getSelectionModel().getSelectedItem();
+                LibraryRoom room = (LibraryRoom) roomView.getSelectionModel().getSelectedItem();
+                System.out.println("room num: " + room.getRoomNumber());
+                System.out.println("reserved by: " + room.getReservedBy());
+                System.out.println("reserved on: " + room.getReservedOn());
+                System.out.println("date reserved: " + room.getDateReserved());
+                removeReservation(room.getRoomNumber(), selectedIndex);
+            }
+
+        }
+    }
     @FXML
     private void handleSearchAction(ActionEvent event) throws IOException, SQLException {
         String _name = nameTextField.getText().trim();
@@ -1056,6 +1230,8 @@ public class DatabaseSQLiteController implements Initializable {
         logsView.setItems(logData);
 
     }
+    
+    
 
     /**
      * Update a record in the movies table

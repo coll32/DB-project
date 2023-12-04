@@ -131,7 +131,19 @@ public class MainController {
         }
 
     }  
-    
+    @FXML
+    public void libraryRooms() throws IOException {
+
+        try {
+            Pane newLoadedPane = FXMLLoader.load(getClass().getResource("LibraryRooms.fxml"));
+            contentPane.getChildren().clear();
+            contentPane.getChildren().add(newLoadedPane);
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+    } 
     
     @FXML
     private void close() throws IOException {

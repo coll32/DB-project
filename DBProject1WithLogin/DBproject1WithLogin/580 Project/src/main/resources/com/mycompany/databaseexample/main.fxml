@@ -30,6 +30,7 @@
                   <MenuItem mnemonicParsing="false" onAction="#checkedOut" text="Checked Out" />
                   <MenuItem mnemonicParsing="false" onAction="#logs" text="Logs" />
                   <MenuItem mnemonicParsing="false" onAction="#overdue" text="Banned List" />
+                  <MenuItem mnemonicParsing="false" onAction="#libraryRooms" text="Study Rooms" />
             </items>
           </Menu>
         </menus>
