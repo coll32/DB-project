@@ -62,7 +62,7 @@
                 <children>
                     <Button mnemonicParsing="false" onAction="#handleReserveRoom" prefHeight="34.0" prefWidth="120.0" styleClass="btn-danger" stylesheets="@styles.css" text="Reserve" />
                   <Button mnemonicParsing="false" onAction="#handleRemoveReservation" prefHeight="34.0" prefWidth="206.0" styleClass="btn-danger" stylesheets="@styles.css" text="Remove Reservation" />
-                  <Text fx:id="errormsg" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="191.205078125">
+                  <Text fx:id="errormsg" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="381.205078125">
                      <font>
                         <Font size="22.0" />
                      </font>

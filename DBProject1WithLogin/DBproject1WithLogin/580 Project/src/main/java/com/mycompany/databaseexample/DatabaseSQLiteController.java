@@ -932,7 +932,8 @@ public class DatabaseSQLiteController implements Initializable {
             stmt.execute(sql2);
             
             System.out.println("Record reserved Successfully");
-
+        }catch (NumberFormatException e) {
+            errormsg.setText("Please Enter a Library Number");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             if (e.getMessage().equals("Room is already reserved. Update not allowed.")) {
