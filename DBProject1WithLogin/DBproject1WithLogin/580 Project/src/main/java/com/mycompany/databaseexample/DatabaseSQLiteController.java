@@ -18,6 +18,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import java.text.SimpleDateFormat;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
@@ -907,15 +908,17 @@ public class DatabaseSQLiteController implements Initializable {
 
             int reservedBy = Integer.valueOf(memberNumber.getText());
             String dateReserved = dateToReserve.getText();
-            Timestamp currentTime = new Timestamp(System.currentTimeMillis()); // Get current timestamp
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+            String formattedDate = dateFormat.format(currentTime);
             String sql = "UPDATE StudyRooms SET ReservedBy = ?, DateReserved = ?, ReservedOn = ? WHERE RoomNumber = ?;";
-            
+            String sql2 = "UPDATE StudyRooms SET ReservedBy = " + reservedBy + ", DateReserved = " + dateReserved + ", ReservedOn = " + formattedDate + " WHERE RoomNumber = " + id + ";";
             preparedStatement = conn.prepareStatement(sql);
 
        
             preparedStatement.setInt(1, reservedBy);
             preparedStatement.setString(2, dateReserved);
-            preparedStatement.setTimestamp(3, currentTime); // Set current timestamp
+            preparedStatement.setString(3, formattedDate); // Set current timestamp
             preparedStatement.setInt(4, id);
 
             
@@ -924,8 +927,10 @@ public class DatabaseSQLiteController implements Initializable {
             
                
             Statement stmt = conn.createStatement();
-            stmt.executeUpdate(sql);
-            errormsg.setText("Room Reserved. Refresh Page.");
+            //stmt.executeUpdate(sql);
+            
+            stmt.execute(sql2);
+            
             System.out.println("Record reserved Successfully");
 
         } catch (SQLException e) {

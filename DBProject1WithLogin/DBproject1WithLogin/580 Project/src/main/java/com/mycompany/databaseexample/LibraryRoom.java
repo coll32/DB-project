@@ -14,7 +14,7 @@ public class LibraryRoom {
     private String reservedOn;
     private String dateReserved;
     
-    public LibraryRoom(int roomNumber, int reservedBy, String reservedOn, String dateReserved) {
+    public LibraryRoom(int roomNumber, int reservedBy, String dateReserved, String reservedOn ) {
         this.roomNumber = roomNumber;
         this.reservedBy = reservedBy;
         this.reservedOn = reservedOn;
