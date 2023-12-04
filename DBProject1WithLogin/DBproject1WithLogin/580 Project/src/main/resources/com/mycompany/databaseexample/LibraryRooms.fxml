@@ -38,11 +38,7 @@
         </BorderPane>
     </top>
     <left>
-        <VBox prefHeight="600.0" prefWidth="122.0" styleClass="sidebar-section">
-         <children>
-            <Button mnemonicParsing="false" onAction="#libraryRooms" prefHeight="34.0" prefWidth="120.0" styleClass="btn-danger" stylesheets="@styles.css" text="Update View" />
-         </children>
-        </VBox>
+        <VBox prefHeight="600.0" prefWidth="122.0" styleClass="sidebar-section" />
     </left>
     <center>
         <VBox fx:id="vBox" minHeight="600.0" prefHeight="500.0" styleClass="content-section">
@@ -66,6 +62,11 @@
                 <children>
                     <Button mnemonicParsing="false" onAction="#handleReserveRoom" prefHeight="34.0" prefWidth="120.0" styleClass="btn-danger" stylesheets="@styles.css" text="Reserve" />
                   <Button mnemonicParsing="false" onAction="#handleRemoveReservation" prefHeight="34.0" prefWidth="206.0" styleClass="btn-danger" stylesheets="@styles.css" text="Remove Reservation" />
+                  <Text fx:id="errormsg" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="191.205078125">
+                     <font>
+                        <Font size="22.0" />
+                     </font>
+                  </Text>
                     
                       </children>
             </HBox>

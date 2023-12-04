@@ -908,8 +908,8 @@ public class DatabaseSQLiteController implements Initializable {
             int reservedBy = Integer.valueOf(memberNumber.getText());
             String dateReserved = dateToReserve.getText();
             Timestamp currentTime = new Timestamp(System.currentTimeMillis()); // Get current timestamp
-            String sql = "UPDATE StudyRooms SET ReservedBy = ?, ReservedOn = ?, DateReserved = ? WHERE RoomNumber = ?";
-        
+            String sql = "UPDATE StudyRooms SET ReservedBy = ?, DateReserved = ?, ReservedOn = ? WHERE RoomNumber = ?;";
+            
             preparedStatement = conn.prepareStatement(sql);
 
        
@@ -925,11 +925,17 @@ public class DatabaseSQLiteController implements Initializable {
                
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
-
+            errormsg.setText("Room Reserved. Refresh Page.");
             System.out.println("Record reserved Successfully");
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            if (e.getMessage().equals("Room is already reserved. Update not allowed.")) {
+                errormsg.setText("This room is already reserved.");
+            } else {
+                errormsg.setText("Room Reserved. Refresh");
+            }
+            
         } finally {
 
             //checkedOutView.getItems().remove(selectedIndex); //selected index != id because selected index changes based off deletions
@@ -969,7 +975,7 @@ public class DatabaseSQLiteController implements Initializable {
         }
     }
     
-    public void removeReservation(int id, int selectedIndex) {
+    public void removeReservation(int roomNumber, int selectedIndex) {
 
         Connection conn = null;
         PreparedStatement preparedStatement = null;
@@ -977,20 +983,18 @@ public class DatabaseSQLiteController implements Initializable {
             // create a connection to the database
             conn = DriverManager.getConnection(databaseURL, username, password);
 
-            String sql = "UPDATE StudyRooms SET ReservedBy = NULL, DateReserved = NULL, ReservedOn = NULL WHERE RoomNumber = ?";
+            String sql = "UPDATE StudyRooms SET ReservedBy = 0, DateReserved = NULL, ReservedOn = NULL WHERE RoomNumber = " +roomNumber + ";";
             // Set current timestamp
-            preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setInt(1, id);
+            //preparedStatement = conn.prepareStatement(sql);
+            //preparedStatement.setInt(1, roomNumber);
+            
+             Statement stmt = conn.createStatement();
+            stmt.execute(sql);
 
             
-            int rowsUpdated = preparedStatement.executeUpdate();
-            
-            
-               
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate(sql);
-
-            System.out.println("Record reserved Successfully");
+            //int rowsUpdated = preparedStatement.executeUpdate();
+            errormsg.setText("Reservation Removed. Refresh");
+            System.out.println("Record removed Successfully");
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
